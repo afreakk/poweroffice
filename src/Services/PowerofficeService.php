@@ -83,8 +83,13 @@ class PowerofficeService
 
     protected function getAuthorizationHeader()
     {
+        $token = $this->session->getAccessToken();
+        if (!$token || $this->session->hasExpired()) {
+            $this->getAccessToken();
+            $token = $this->session->getAccessToken();
+        }
         return [
-            'Authorization' => 'Bearer ' . $this->session->getAccessToken(),
+            'Authorization' => 'Bearer ' . $token,
         ];
     }
 
@@ -156,7 +161,7 @@ class PowerofficeService
         ], $params);
 
         /** @var \GuzzleHttp\Psr7\Response $request */
-        $request = $this->client->requestAsync($method, $this->getApiUrl($path), $options);
+        $request = $this->client->request($method, $this->getApiUrl($path), $options);
         $response = json_decode($request->getBody(), true);
 
         if ($request->getStatusCode() == 401) {

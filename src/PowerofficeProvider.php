@@ -3,6 +3,7 @@
 namespace Guilty\Poweroffice;
 
 use Guilty\Poweroffice\Services\PowerofficeService;
+use Guilty\Poweroffice\Sessions\LaravelSession;
 use Guilty\Poweroffice\Sessions\SessionInterface;
 use Guilty\Poweroffice\Sessions\ValueStoreSession;
 use GuzzleHttp\Client;
@@ -28,8 +29,12 @@ class PowerofficeProvider extends ServiceProvider
 
 
         $this->app->bind(SessionInterface::class, function () {
-            $store = Valuestore::make(config("poweroffice.store_path"));
-            return new ValueStoreSession($store);
+            if (config('poweroffice.session_store') === 'laravel') {
+                return new LaravelSession();
+            } else {
+                $store = Valuestore::make(config("poweroffice.store_path"));
+                return new ValueStoreSession($store);
+            }
         });
 
 
@@ -37,9 +42,9 @@ class PowerofficeProvider extends ServiceProvider
             return new PowerOfficeService(
                 app(Client::class),
                 app(SessionInterface::class),
-                config('services.poweroffice.application_key'),
-                config('services.poweroffice.client_key'),
-                config('services.poweroffice.test_mode', true)
+                config('poweroffice.application_key'),
+                config('poweroffice.client_key'),
+                config('poweroffice.test_mode', true)
             );
         });
     }
