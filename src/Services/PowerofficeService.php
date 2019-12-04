@@ -83,8 +83,15 @@ class PowerofficeService
 
     protected function getAuthorizationHeader()
     {
+        try {
+            // it might throw with invalid_grant (not sure what that means, maybe refresh_token has expired?)
+            // in that case just catch exception and get new token
+            $this->refreshIfExpired();
+        } catch(\Exception $e) {
+            $this->getAccessToken();
+        }
         $token = $this->session->getAccessToken();
-        if (!$token || $this->session->hasExpired()) {
+        if (!$token) {
             $this->getAccessToken();
             $token = $this->session->getAccessToken();
         }
