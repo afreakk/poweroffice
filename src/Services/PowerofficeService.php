@@ -56,14 +56,14 @@ class PowerofficeService
     {
         $this->testMode = false;
         $this->apiBaseUrl = "https://api.poweroffice.net";
-        $this->authBaseUrl = "https://go.poweroffice.net";
+        $this->authBaseUrl = "https://api.poweroffice.net";
     }
 
     protected function useTestMode()
     {
         $this->testMode = true;
         $this->apiBaseUrl = "https://api-demo.poweroffice.net";
-        $this->authBaseUrl = "https://godemo.poweroffice.net";
+        $this->authBaseUrl = "https://api-demo.poweroffice.net";
     }
 
     protected function getAccessTokenUrl()
